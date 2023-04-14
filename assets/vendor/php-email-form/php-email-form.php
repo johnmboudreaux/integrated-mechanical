@@ -891,7 +891,7 @@ class PHPMailer
      *
      * @var array
      */
-    protected $CustomHeader = [];
+    protected $CustomHead er = [];
 
     /**
      * The most recent Message-ID (including angular brackets).
