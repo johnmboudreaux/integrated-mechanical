@@ -1,5 +1,7 @@
 const express = require('express')
 const nodemailer = require('nodemailer')
+const { google } = require("googleapis")
+const OAuth2 = google.auth.OAuth2
 const cors = require('cors')
 require('dotenv').config()
 
@@ -25,56 +27,72 @@ const requireHTTPS = (request, response, next) => {
   }
   next()
 }
+
 if (process.env.NODE_ENV === 'production') {
   app.use(requireHTTPS)
 }
 
 app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname + '/build/index.html'))
+  res.status(200).json({ message: 'Hello' })
 })
 
-app.post('/api/v1/messageReceived', (req, res) => {
-  const { to, email, subject, text, city} = req.body
-
-  if (to && email && subject && text && !city) {
-    // const transporter = nodemailer.createTransport({
-    //   host: 'smtp.gmail.com',
-    //   port: 587,
-    //   secure: false,
-    //   auth: {
-    //     user: 'jhnbdrx@gmail.com',
-    //     pass: process.env.JHNBDRX_PASS,
-    //   },
-    // })
-
-    const transporter = nodemailer.createTransport({
-        service: 'gmail',
-        auth: {
-          user: 'jhnbdrx@gmail.com',
-          pass: process.env.JHNBDRX_PASS,
-        },
-      })
-
-    const mailOptions = {
-        from: 'jhnbdrx@gmail.com',
-        to, 
-        subject,
-        text
+const createTransporter = async () => {
+  const oauth2Client = new OAuth2(
+    process.env.CLIENT_ID,
+    process.env.CLIENT_SECRET,
+    "https://developers.google.com/oauthplayground"
+    )
+    
+  oauth2Client.setCredentials({
+    refresh_token: process.env.REFRESH_TOKEN
+  })
+    
+  const accessToken = await new Promise((resolve, reject) => {
+    oauth2Client.getAccessToken((err, token) => {
+      console.log(err)
+      if (err) {
+        reject(err)
       }
-
-    transporter.sendMail(mailOptions, (error, info) => {
-      if (error) {
-        res.status(500).json({
-            success: false,
-            error,
-            message: 'Internal server error',
-        })
-      } else {
-        res.status(201).json({
-          success: true,
-        })
-      }
+      resolve(token)
     })
+  })
+  console.log('in here', accessToken)
+
+  const transporter = nodemailer.createTransport({
+    service: "gmail",
+    auth: {
+      type: "OAuth2",
+      user: process.env.EMAIL,
+      accessToken,
+      clientId: process.env.CLIENT_ID,
+      clientSecret: process.env.CLIENT_SECRET,
+      refreshToken: process.env.REFRESH_TOKEN,
+    }
+  })
+
+  return transporter
+}
+
+const sendEmail = async (emailOptions) => {
+    let emailTransporter = await createTransporter()
+    await emailTransporter.sendMail(emailOptions)
+}
+
+app.post('/api/v1/messageReceived', (req, res) => {
+  const { city, from, name, subject, text } = req.body
+
+  if (from && name && subject && text && !city) {
+    try {
+      sendEmail({
+        from,
+        subject,
+        text,
+        to: process.env.EMAIL,
+      })
+    } catch (error) {
+      console.log(error)
+      res.status(500).json({ message: `Internal server error. Error: ${error}` })
+    }
   } else if (city) {
     res.status(406).json({
       success: false,

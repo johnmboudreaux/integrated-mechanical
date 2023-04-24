@@ -1639,6 +1639,11 @@ section {
   background: #8dbad2;
 }
 
+.contact-city {
+  height: 0px;
+  overflow: hidden;
+}
+
 @keyframes animate-loading {
   0% {
     transform: rotate(0deg);

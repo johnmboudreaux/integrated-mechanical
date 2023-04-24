@@ -7,22 +7,17 @@
     
     const formData = new FormData(contactForm)
     const name = formData.get('name')
-    const email = formData.get('email')
+    const from = formData.get('email')
     const subject = formData.get('subject')
-    const message = formData.get('message')
-    
-    // nodemailer values
-    console.log('Name:', name)
-    console.log('Email:', email)
-    console.log('Subject:', subject)
-    console.log('Message:', message)
+    const text = formData.get('message')
+    const city = formData.get('city')
 
     fetch('http://localhost:3000/api/v1/messageReceived', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ to: name, email, subject, text: message })
+        body: JSON.stringify({ city, from, name, subject, text })
       })
       .then(response => {
         if (!response.ok) {
