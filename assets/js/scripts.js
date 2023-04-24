@@ -1,6 +1,8 @@
-const contactForm = document.getElementById('contact')
-console.log(contactForm);
-contactForm.addEventListener('submit', (e) => {
+(function() {
+  "use strict"
+
+  const contactForm = document.getElementById('contact')
+  contactForm.addEventListener('submit', (e) => {
     e.preventDefault()
     
     const formData = new FormData(contactForm)
@@ -9,8 +11,7 @@ contactForm.addEventListener('submit', (e) => {
     const subject = formData.get('subject')
     const message = formData.get('message')
     
-    // You can now use these values to send an email using Nodemailer or another email sending library
-    
+    // nodemailer values
     console.log('Name:', name)
     console.log('Email:', email)
     console.log('Subject:', subject)
@@ -37,3 +38,5 @@ contactForm.addEventListener('submit', (e) => {
         console.error('There was a problem with the fetch operation:', error)
       })
   })
+
+})()

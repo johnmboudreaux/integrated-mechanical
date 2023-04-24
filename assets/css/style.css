@@ -1,11 +1,3 @@
-/**
-* Template Name: Moderna
-* Updated: Mar 10 2023 with Bootstrap v5.2.3
-* Template URL: https://bootstrapmade.com/free-bootstrap-template-corporate-moderna/
-* Author: BootstrapMade.com
-* License: https://bootstrapmade.com/license/
-*/
-
 /*--------------------------------------------------------------
 # General
 --------------------------------------------------------------*/
@@ -737,6 +729,22 @@ section {
   border-color: #2282ff;
 }
 
+@media (max-width: 1200px) {
+  .services .description {
+    font-size: 15px;
+    line-height: 22px;
+  }
+  .services .title {
+    font-size: 15px !important;
+  }
+}
+
+@media (max-width: 990px) {
+  .services .description {
+    font-size: 13px;
+  }
+}
+
 /*--------------------------------------------------------------
 # Why Us
 --------------------------------------------------------------*/
@@ -914,6 +922,28 @@ section {
 
 .features p:last-child {
   margin-bottom: 0;
+}
+
+@media (max-width: 1400px) {
+  .features .body-text {
+    padding-top: 25px !important;
+  }
+}
+
+@media (max-width: 1200px) {
+  .features .body-text {
+    padding-top: 6px !important;
+  }
+  .features .body-text,
+  .features .body-text .ul {
+    font-size: 15px;
+  }
+}
+
+@media (max-width: 990px) {
+  .features .body-text ul {
+    display: none;
+  }
 }
 
 /*--------------------------------------------------------------
