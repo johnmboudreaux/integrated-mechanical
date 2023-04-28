@@ -1,8 +1,8 @@
 (function() {
   "use strict"
 
-  const contactForm = document.getElementById('contact')
-  contactForm.addEventListener('submit', (e) => {
+  const contactForm = document.getElementById('contact-form')
+  contactForm.addEventListener('submit', async function(e) {
     e.preventDefault()
     
     const formData = new FormData(contactForm)
@@ -12,26 +12,30 @@
     const text = formData.get('message')
     const city = formData.get('city')
 
-    fetch('http://localhost:3000/api/v1/messageReceived', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ city, from, name, subject, text })
+    try {
+      contactForm.querySelector('.loading').classList.remove('d-none')
+
+      const response = await fetch('http://integrated-mechanical.com/api/v1/message-received', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ city, from, name, subject, text })
       })
-      .then(response => {
-        if (!response.ok) {
-          throw new Error('Network response was not ok')
-        }
-        return response.json()
-      })
-      .then(data => {
-        console.log(data)
-        // Do something with the response data
-      })
-      .catch(error => {
-        console.error('There was a problem with the fetch operation:', error)
-      })
+
+      const data = await response.json()
+      if (data.error) {
+        throw new Error(data.error)
+      }
+      contactForm.querySelector('.loading').classList.add('d-none')
+      contactForm.querySelector('.sent-message').classList.remove('d-none')
+    } catch (error) {
+      console.log(error)
+      contactForm.querySelector('.error-message').classList.remove('d-none')
+      return
+    } finally {
+      contactForm.querySelector('.loading').classList.add('d-none')
+    }
   })
 
 })()

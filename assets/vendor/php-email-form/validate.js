@@ -7,7 +7,6 @@
   "use strict";
 
   let forms = document.querySelectorAll('.email-form');
-console.log('in validate');
   forms.forEach( function(e) {
     e.addEventListener('submit', function(event) {
       event.preventDefault();

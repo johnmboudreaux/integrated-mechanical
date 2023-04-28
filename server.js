@@ -18,19 +18,16 @@ app.use(
   }),
 )
 
-app.use(express.static('src'))
-app.use(express.static('build'))
+// const requireHTTPS = (request, response, next) => {
+//   if (request.header('x-forwarded-proto') !== 'https') {
+//     return response.redirect(`https://${request.header('host')}${request.url}`)
+//   }
+//   next()
+// }
 
-const requireHTTPS = (request, response, next) => {
-  if (request.header('x-forwarded-proto') !== 'https') {
-    return response.redirect(`https://${request.header('host')}${request.url}`)
-  }
-  next()
-}
-
-if (process.env.NODE_ENV === 'production') {
-  app.use(requireHTTPS)
-}
+// if (process.env.NODE_ENV === 'production') {
+//   app.use(requireHTTPS)
+// }
 
 app.get('/', (req, res) => {
   res.status(200).json({ message: 'Hello' })
@@ -40,7 +37,7 @@ const createTransporter = async () => {
   const oauth2Client = new OAuth2(
     process.env.CLIENT_ID,
     process.env.CLIENT_SECRET,
-    "https://developers.google.com/oauthplayground"
+    "http://integrated-mechanical.com/contact"
     )
     
   oauth2Client.setCredentials({
@@ -56,7 +53,6 @@ const createTransporter = async () => {
       resolve(token)
     })
   })
-  console.log('in here', accessToken)
 
   const transporter = nodemailer.createTransport({
     service: "gmail",
@@ -78,7 +74,7 @@ const sendEmail = async (emailOptions) => {
     await emailTransporter.sendMail(emailOptions)
 }
 
-app.post('/api/v1/messageReceived', (req, res) => {
+app.post('/api/v1/message-received', (req, res) => {
   const { city, from, name, subject, text } = req.body
 
   if (from && name && subject && text && !city) {
@@ -89,9 +85,10 @@ app.post('/api/v1/messageReceived', (req, res) => {
         text,
         to: process.env.EMAIL,
       })
+      res.status(200).json({ message: 'Message sent' })
     } catch (error) {
       console.log(error)
-      res.status(500).json({ message: `Internal server error. Error: ${error}` })
+      res.status(500).json({ error })
     }
   } else if (city) {
     res.status(406).json({
@@ -105,6 +102,23 @@ app.post('/api/v1/messageReceived', (req, res) => {
     })
   }
 })
+
+// // Create a new Yahoo transport object
+// const transporter = nodemailer.createTransport({
+//   service: 'yahoo',
+//   auth: {
+//     user: 'your_yahoo_username',
+//     password: 'your_yahoo_password'
+//   }
+// })
+
+// // Send an email
+// transporter.sendMail({
+//   from: 'your_gmail_username@gmail.com',
+//   to: 'your_yahoo_email_address',
+//   subject: 'New message from contact form',
+//   text: 'This is a test message.'
+// })
 
 app.listen(3000, () => console.log('IM listening on port 3000!'))
 
