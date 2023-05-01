@@ -15,7 +15,7 @@
     try {
       contactForm.querySelector('.loading').classList.remove('d-none')
 
-      const response = await fetch('http://integrated-mechanical.com/api/v1/message-received', {
+      const response = await fetch('https://integrated-mechanical.com/api/v1/message-received', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

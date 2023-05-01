@@ -18,16 +18,16 @@ app.use(
   }),
 )
 
-// const requireHTTPS = (request, response, next) => {
-//   if (request.header('x-forwarded-proto') !== 'https') {
-//     return response.redirect(`https://${request.header('host')}${request.url}`)
-//   }
-//   next()
-// }
+const requireHTTPS = (request, response, next) => {
+  if (request.header('x-forwarded-proto') !== 'https') {
+    return response.redirect(`https://${request.header('host')}${request.url}`)
+  }
+  next()
+}
 
-// if (process.env.NODE_ENV === 'production') {
-//   app.use(requireHTTPS)
-// }
+if (process.env.NODE_ENV === 'production') {
+  app.use(requireHTTPS)
+}
 
 app.get('/', (req, res) => {
   res.status(200).json({ message: 'Hello' })
@@ -37,7 +37,7 @@ const createTransporter = async () => {
   const oauth2Client = new OAuth2(
     process.env.CLIENT_ID,
     process.env.CLIENT_SECRET,
-    "http://integrated-mechanical.com/contact"
+    "https://integrated-mechanical.com/contact"
     )
     
   oauth2Client.setCredentials({
